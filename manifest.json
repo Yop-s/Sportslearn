@@ -1,9 +1,23 @@
 {
   "name": "SportLearn",
   "short_name": "SportLearn",
-  "start_url": "index.html",
+  "description": "Aplikasi pembelajaran olahraga berbasis web",
+  "start_url": "/Sportslearn/index.html",
+  "scope": "/Sportslearn/",
   "display": "standalone",
-  "background_color": "#4A90E2",
+  "background_color": "#ffffff",
   "theme_color": "#4A90E2",
-  "icons": []
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
