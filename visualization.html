@@ -1,0 +1,814 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisasi Teknik Olahraga - SportLearn</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .visualization-container {
+            background: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .viz-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .technique-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .technique-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .technique-image {
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .technique-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .technique-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .technique-content {
+            padding: 1.5rem;
+        }
+        
+        .technique-steps {
+            margin-top: 1rem;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .animation-section {
+            background: #f8f9fa;
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+        
+        .animation-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .animation-canvas {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .player-dot {
+            width: 30px;
+            height: 30px;
+            background: #4A90E2;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .ball {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .trajectory-line {
+            position: absolute;
+            height: 2px;
+            background: rgba(74, 144, 226, 0.3);
+            transform-origin: left center;
+            pointer-events: none;
+        }
+        
+        .animation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .control-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .play-btn {
+            background: #27AE60;
+            color: white;
+        }
+        
+        .play-btn:hover {
+            background: #229954;
+        }
+        
+        .reset-btn {
+            background: #E74C3C;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background: #C0392B;
+        }
+        
+        .technique-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .technique-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #4A90E2;
+            background: white;
+            color: #4A90E2;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .technique-btn.active,
+        .technique-btn:hover {
+            background: #4A90E2;
+            color: white;
+        }
+        
+        .video-transcript {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .transcript-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f8f9fa;
+        }
+        
+        .transcript-content {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+        
+        .transcript-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .transcript-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .transcript-content::-webkit-scrollbar-thumb {
+            background: #4A90E2;
+            border-radius: 3px;
+        }
+        
+        .transcript-timestamp {
+            color: #4A90E2;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .transcript-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .highlight-text {
+            background: #fff3cd;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .back-to-main {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #4A90E2;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-to-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .technique-gallery {
+                grid-template-columns: 1fr;
+            }
+            
+            .animation-canvas {
+                height: 300px;
+            }
+            
+            .technique-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .technique-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="visualization-container">
+        <a href="index.html" class="back-to-main">
+            <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+        </a>
+        
+        <div class="viz-header">
+            <h1>Visualisasi Teknik Olahraga</h1>
+            <p>Pelajari teknik dasar olahraga dengan demonstrasi visual yang interaktif</p>
+        </div>
+        
+        <section class="technique-gallery">
+            <div class="technique-card">
+                <div class="technique-image">
+                    <img src="https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400" alt="Teknik Menggiring Bola">
+                    <span class="technique-badge">Sepak Bola</span>
+                </div>
+                <div class="technique-content">
+                    <h3>Teknik Menggiring Bola</h3>
+                    <p>Master teknik menggiring bola untuk menguasai permainan sepak bola</p>
+                    <div class="technique-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Persiapan:</strong> Berdiri dengan kaki selebar bahu, lutut sedikit ditekuk
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong> sentuhan:</strong> Gunakan bagian dalam kaki untuk menyentuh bola secara ringan
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Kecepatan:</strong> Pertahankan kontrol bola saat meningkatkan kecepatan
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div>
+                                <strong>Head Up:</strong> Selalu angkat kepala untuk melihat situasi lapangan
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <div class="technique-image">
+                    <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400" alt="Teknik Shooting Basket">
+                    <span class="technique-badge">Basket</span>
+                </div>
+                <div class="technique-content">
+                    <h3>Teknik Shooting Basket</h3>
+                    <p>Kuasai form shooting yang sempurna untuk akurasi maksimal</p>
+                    <div class="technique-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Stance:</strong> Berdiri dengan bahu menghadap ring, kaki selebar bahu
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>Grip:</strong> Pegang bola dengan jari-jari tersebar, jempol di belakang
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Follow Through:</strong> Ayunkan lengan ke atas dengan pergelangan tangan flex
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div>
+                                <strong>Release:</strong> Lepaskan bola pada puncak loncatan dengan lembut
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <div class="technique-image">
+                    <img src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=400" alt="Teknik Smash Voli">
+                    <span class="technique-badge">Voli</span>
+                </div>
+                <div class="technique-content">
+                    <h3>Teknik Smash Voli</h3>
+                    <p>Latih teknik smash untuk serangan yang kuat dan efektif</p>
+                    <div class="technique-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Approach:</strong> Ambil 3-4 langkah pendekatan dari belakang
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>Jump:</strong> Loncat dengan kedua kaki, lengan diangkat tinggi
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Contact:</strong> Pukul bola di depan dahi dengan pergelangan tangan flex
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div>
+                                <strong>Follow Through:</strong> Ayunkan lengan melewati badan setelah kontak
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <div class="technique-image">
+                    <img src="https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=400" alt="Teknis Serve Tenis">
+                    <span class="technique-badge">Tenis</span>
+                </div>
+                <div class="technique-content">
+                    <h3>Teknik Serve Tenis</h3>
+                    <p>Perfect your serve untuk memulai setiap poin dengan keunggulan</p>
+                    <div class="technique-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Stance:</strong> Berdiri sideways ke net, kaki kiri di depan (right-handed)
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>Toss:</strong> Lempar bola sedikit ke depan dan tinggi dengan konsisten
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Motion:</strong> Ayunkan raket seperti "C" motion, scrap the back
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div>
+                                <strong>Contact:</strong> Pukul bola pada titik tertinggi dengan full extension
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <div class="technique-image">
+                    <img src="https://images.unsplash.com/photo-1594681055267-95455b0b7b7a?w=400" alt="Teknik Smash Badminton">
+                    <span class="technique-badge">Bulu Tangkis</span>
+                </div>
+                <div class="technique-content">
+                    <h3>Teknik Smash Badminton</h3>
+                    <p>Kembangkan power dan akurasi smash untuk dominasi permainan</p>
+                    <div class="technique-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Position:</strong> Berada di belakang court, kaki selebar bahu
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>Backswing:</strong> Angkat raket di belakang kepala, body coiled
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Explosion:</strong> Uncoil body dengan powerful wrist snap
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div>
+                                <strong>Contact:</strong> Pukul shuttle di depan badan dengan maksimal power
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="technique-card">
+                <div class="technique-image">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400" alt="Teknik Passing Sepak Bola">
+                    <span class="technique-badge">Sepak Bola</span>
+                </div>
+                <div class="technique-content">
+                    <h3>Teknik Passing Sepak Bola</h3>
+                    <p>Master berbagai jenis passing untuk mengontrol alur permainan</p>
+                    <div class="technique-steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Inside Pass:</strong> Gunakan bagian dalam kaki untuk passing akurat jarak dekat
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>Outside Pass:</strong> Gunakan bagian luar kaki untuk passing diagonal
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Long Pass:</strong> Gunakan instep untuk passing jarak jauh dengan power
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div>
+                                <strong>Weight:</strong> Sesuaikan kekuatan passing dengan jarak target
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="animation-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Animasi Demonstrasi Teknik</h2>
+                    <p>Lihat pergerakan pemain dan trajektori bola dalam animasi interaktif</p>
+                </div>
+                
+                <div class="technique-selector">
+                    <button class="technique-btn active" onclick="showTechnique('dribble')">Menggiring Bola</button>
+                    <button class="technique-btn" onclick="showTechnique('passing')">Passing Sepak Bola</button>
+                    <button class="technique-btn" onclick="showTechnique('shooting')">Shooting Basket</button>
+                    <button class="technique-btn" onclick="showTechnique('smash')">Smash Voli</button>
+                </div>
+                
+                <div class="animation-container">
+                    <div class="animation-canvas" id="animationCanvas">
+                        <div class="player-dot" id="player1" style="left: 50px; top: 200px;">P</div>
+                        <div class="player-dot" id="player2" style="left: 300px; top: 200px;">T</div>
+                        <div class="ball" id="ball" style="left: 80px; top: 200px;"></div>
+                    </div>
+                    
+                    <div class="animation-controls">
+                        <button class="control-btn play-btn" onclick="playAnimation()">
+                            <i class="fas fa-play"></i> Play Animation
+                        </button>
+                        <button class="control-btn reset-btn" onclick="resetAnimation()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="video-transcript-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Transkrip Video Tutorial</h2>
+                    <p>Pelajari teknik detail dengan transkrip video yang komprehensif</p>
+                </div>
+                
+                <div class="video-transcript">
+                    <div class="transcript-header">
+                        <h3>Teknik Menggiring Bola Sepak Bola - Dasar</h3>
+                        <button class="btn btn-primary" onclick="playTutorialVideo()">
+                            <i class="fas fa-play"></i> Tonton Video
+                        </button>
+                    </div>
+                    
+                    <div class="transcript-content">
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">00:00</span>
+                            <p class="transcript-text">
+                                Halo semuanya! Selamat datang di tutorial <span class="highlight-text">teknik dasar menggiring bola</span> dalam sepak bola. Hari ini kita akan mempelajari fundamental yang paling penting dalam permainan sepak bola.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">00:15</span>
+                            <p class="transcript-text">
+                                Pertama, mari kita mulai dengan <span class="highlight-text">posisi badan yang benar</span>. Berdirilah dengan kaki selebar bahu, lutut sedikit ditekuk, dan badan sedikit condong ke depan. Posisi ini memberikan Anda keseimbangan yang optimal dan memungkinkan pergerakan yang cepat.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">00:30</span>
+                            <p class="transcript-text">
+                                Hal penting kedua adalah <span class="highlight-text">penempatan kaki</span>. Kaki yang tidak digunakan untuk menggiring bola harus sedikit di depan dan siap untuk bergerak. Ini memberikan stabilitas dan memungkinkan perubahan arah yang cepat.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">00:45</span>
+                            <p class="transcript-text">
+                                Sekarang tentang <span class="highlight-text">sentuhan bola</span>. Gunakan bagian dalam kaki untuk menyentuh bola. Sentuhan harus ringan namun terkontrol. Bola harus tetap dekat dengan kaki Anda - idealnya tidak lebih dari satu langkah dari kaki.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">01:00</span>
+                            <p class="transcript-text">
+                                <span class="highlight-text">Tip profesional:</span> Cobalah untuk tidak menatap bola terus-menerus. Angkat kepala Anda secara berkala untuk melihat situasi di sekitar. Ini akan datang dengan latihan dan kepercayaan diri.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">01:15</span>
+                            <p class="transcript-text">
+                                Mari kita praktikkan <span class="highlight-text">drill pertama</span>. Arahkan bola lurus ke depan dengan sentuhan ringan. Lakukan ini 10 kali, fokus pada kontrol dan kecepatan yang konsisten.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">01:30</span>
+                            <p class="transcript-text">
+                                <span class="highlight-text">Drill kedua:</span> Sekarang coba menggiring bola dalam polo zigzag. Gunakan kedua kaki secara bergantian. Ini akan meningkatkan kemampuan mengubah arah dan kontrol bola dengan kedua kaki.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">01:45</span>
+                            <p class="transcript-text">
+                                <span class="highlight-text">Kesalahan umum:</span> Banyak pemain pemula menendang bola terlalu keras. Ingat, tujuannya adalah kontrol, bukan kecepatan. Kecepatan akan datang naturally setelah Anda menguasai kontrol.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">02:00</span>
+                            <p class="transcript-text">
+                                <span class="highlight-text">Latihan lanjutan:</span> Cobalah menggiring bola dengan kecepatan tinggi sambil menjaga kontrol. Latih ini di area yang luas dan fokus pada sentuhan bola yang konsisten bahkan saat bergerak cepat.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">02:15</span>
+                            <p class="transcript-text">
+                                Terakhir, <span class="highlight-text">ingat selalu</span>: practice makes perfect! Luangkan waktu setiap hari untuk latihan menggiring bola. Mulai dengan 10-15 menit dan tingkatkan secara bertahap.
+                            </p>
+                        </div>
+                        
+                        <div class="transcript-item">
+                            <span class="transcript-timestamp">02:25</span>
+                            <p class="transcript-text">
+                                Terima kasih telah menonton! Jangan lupa subscribe untuk tutorial sepak bola lainnya. Sampai jumpa di video berikutnya!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        let currentTechnique = 'dribble';
+        let animationInterval = null;
+        let animationStep = 0;
+        
+        const techniques = {
+            dribble: {
+                name: 'Menggiring Bola',
+                steps: [
+                    { player1: { x: 50, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 80, y: 200 } },
+                    { player1: { x: 100, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 130, y: 200 } },
+                    { player1: { x: 150, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 180, y: 200 } },
+                    { player1: { x: 200, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 230, y: 200 } },
+                    { player1: { x: 250, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 280, y: 200 } }
+                ]
+            },
+            passing: {
+                name: 'Passing',
+                steps: [
+                    { player1: { x: 50, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 80, y: 200 } },
+                    { player1: { x: 50, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 150, y: 180 } },
+                    { player1: { x: 50, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 200, y: 160 } },
+                    { player1: { x: 50, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 250, y: 180 } },
+                    { player1: { x: 50, y: 200 }, player2: { x: 300, y: 200 }, ball: { x: 280, y: 200 } }
+                ]
+            },
+            shooting: {
+                name: 'Shooting Basket',
+                steps: [
+                    { player1: { x: 200, y: 300 }, player2: { x: 400, y: 100 }, ball: { x: 200, y: 280 } },
+                    { player1: { x: 200, y: 250 }, player2: { x: 400, y: 100 }, ball: { x: 200, y: 200 } },
+                    { player1: { x: 200, y: 200 }, player2: { x: 400, y: 100 }, ball: { x: 250, y: 150 } },
+                    { player1: { x: 200, y: 200 }, player2: { x: 400, y: 100 }, ball: { x: 300, y: 100 } },
+                    { player1: { x: 200, y: 200 }, player2: { x: 400, y: 100 }, ball: { x: 380, y: 100 } }
+                ]
+            },
+            smash: {
+                name: 'Smash Voli',
+                steps: [
+                    { player1: { x: 200, y: 100 }, player2: { x: 200, y: 300 }, ball: { x: 200, y: 50 } },
+                    { player1: { x: 200, y: 80 }, player2: { x: 200, y: 300 }, ball: { x: 200, y: 70 } },
+                    { player1: { x: 200, y: 60 }, player2: { x: 200, y: 300 }, ball: { x: 200, y: 90 } },
+                    { player1: { x: 200, y: 80 }, player2: { x: 200, y: 300 }, ball: { x: 200, y: 150 } },
+                    { player1: { x: 200, y: 100 }, player2: { x: 200, y: 300 }, ball: { x: 200, y: 250 } }
+                ]
+            }
+        };
+        
+        function showTechnique(technique) {
+            currentTechnique = technique;
+            
+            // Update button states
+            document.querySelectorAll('.technique-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            resetAnimation();
+        }
+        
+        function playAnimation() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+            
+            const steps = techniques[currentTechnique].steps;
+            animationStep = 0;
+            
+            animationInterval = setInterval(() => {
+                if (animationStep >= steps.length) {
+                    clearInterval(animationInterval);
+                    return;
+                }
+                
+                const step = steps[animationStep];
+                const player1 = document.getElementById('player1');
+                const player2 = document.getElementById('player2');
+                const ball = document.getElementById('ball');
+                
+                player1.style.left = step.player1.x + 'px';
+                player1.style.top = step.player1.y + 'px';
+                
+                player2.style.left = step.player2.x + 'px';
+                player2.style.top = step.player2.y + 'px';
+                
+                ball.style.left = step.ball.x + 'px';
+                ball.style.top = step.ball.y + 'px';
+                
+                animationStep++;
+            }, 500);
+        }
+        
+        function resetAnimation() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+            
+            const player1 = document.getElementById('player1');
+            const player2 = document.getElementById('player2');
+            const ball = document.getElementById('ball');
+            
+            player1.style.left = '50px';
+            player1.style.top = '200px';
+            
+            player2.style.left = '300px';
+            player2.style.top = '200px';
+            
+            ball.style.left = '80px';
+            ball.style.top = '200px';
+            
+            animationStep = 0;
+        }
+        
+        function playTutorialVideo() {
+            // In a real app, this would open a video player or redirect to YouTube
+            alert('Video tutorial akan dibuka di tab baru. Dalam implementasi nyata, ini akan membuka video YouTube atau video player khusus.');
+            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+        }
+        
+        // Smooth scroll for technique cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.technique-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

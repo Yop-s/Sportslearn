@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SportLearn</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <header class="header">
+    <h1>SportLearn</h1>
+    <nav>
+      <a href="video-tutorials.html">Video</a>
+      <a href="visualization.html">Visualisasi</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h2>Aplikasi Pembelajaran Olahraga</h2>
+      <p>Belajar olahraga dengan video, visualisasi, kuis, dan progres belajar.</p>
+      <button id="installBtn" class="btn">Install App</button>
+    </section>
+
+    <section class="stats">
+      <div>Olahraga Selesai: <span id="completedSports">0</span></div>
+      <div>Jam Belajar: <span id="learningHours">0</span></div>
+      <div>Prestasi: <span id="achievements">0</span></div>
+      <div>Streak: <span id="streak">0</span></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
